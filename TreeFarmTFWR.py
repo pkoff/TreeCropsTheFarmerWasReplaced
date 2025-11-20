@@ -1,19 +1,71 @@
-import pandas as pd
+even = 1
+posx = get_pos_x()
+posy = get_pos_y() 
 
-# URL do arquivo ICF
-url = "https://raw.githubusercontent.com/fserb/pt-br/refs/heads/master/icf"
+print(posx, posy)
 
-# Lendo o arquivo direto com pandas
-df = pd.read_csv(url, sep=" ", names=["palavra", "icf"])
+while (get_pos_x() != 0) or (get_pos_y() != 0):
+	
+	current_x = get_pos_x()
+	current_y = get_pos_y()
+	
+	if current_x > 0:
+		move(West)
+		
+	elif current_x < 0:
+		move(East)
+		
+	if current_y > 0:
+		move(South)
+	
+	elif current_x < 0:
+		move(East)
+		
+while True:
+	for i in range(get_world_size()):
+		
+		if even == True:
+			if i % 2 == 0:
+				if can_harvest():
+					harvest()
+					
+				if not plant(Entities.Carrot):
+					till()
+					
+				plant(Entities.Carrot)
+				
+				if get_water() < 1:
+					use_item(Items.Water)
+					
+				move(North)
+				continue
+		
+		else:
+			if i % 2 != 0:
+				if not can_harvest():
+					till()
+			
+				if can_harvest():
+					harvest()
+						
+				if get_water() < 1:
+					use_item(Items.Water)
+					
+				move(North)
+				continue
 
-# Filtrar palavras de 5 letras
-df_5 = df[df["palavra"].str.len() == 5]
 
-# Ordenar pela maior probabilidade (menor ICF)
-df_5_sorted = df_5.sort_values("icf")
-
-# Transformar em lista
-lista_palavras = df_5_sorted["palavra"].tolist()
-
-print(lista_palavras[:50])   # mostra as 50 mais frequentes
-
+		if not can_harvest():
+			till()
+			
+		if can_harvest():
+			harvest()
+			plant(Entities.Tree)		
+		
+		if get_water() < 1:
+			use_item(Items.Water)	
+			
+		move(North)
+		
+	move(East)
+	even = not even
